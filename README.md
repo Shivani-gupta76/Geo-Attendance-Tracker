@@ -1,9 +1,5 @@
 # Geo Attendance Tracker
 
-Repository: [Shivani-gupta76/Geo-Attendance-Tracker](https://github.com/Shivani-gupta76/Geo-Attendance-Tracker)
-
-This project continues [Khushi Ray's original Geo Attendance Tracker](https://github.com/khushiray07/geo-attendance-tracker). The original author is credited here; this repository does not claim original authorship. No LICENSE file was present in the source repository, so no license terms are asserted by this copy.
-
 Hackathon-ready employee attendance system with browser geolocation, server-side geofence validation, JWT auth, PostgreSQL storage, admin reporting, audit logs, and CSV export.
 
 ## Tech Stack
