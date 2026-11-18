@@ -13,36 +13,82 @@ Hackathon-ready employee attendance system with browser geolocation, server-side
 
 ## Features
 
-- Signup/login, organization setup, invite codes and employee accounts
-- Server-side check-in/out validation and working-minute calculation
-- Geofencing, late arrival tracking, auto checkout, and audit logs
-- WFH, On Duty, Leave, admin exceptions, and office settings
-- Employee and admin dashboards, attendance history, calendars, reports and CSV export
-- Optional SMTP late-arrival email
+- Real signup/login plus optional demo accounts
+- Admin creates an organization and invite code
+- Employees join by invite code
+- Server-side check-in/check-out validation
+- Duplicate check-in rejection
+- Check-out without check-in rejection
+- Server-side working minutes calculation
+- Server-side late arrival calculation
+- Configurable missed punch-out auto checkout with audit logs
+- Foreground geofence heartbeat tracking for Not Onsite intervals while employees are checked in
+- Departments: Engineering, HR, Sales, Operations
+- WFH, On Duty, Leave, and on-site admin exceptions
+- Audit logs for punch attempts, rejections, admin exceptions, and auto checkout
+- Office settings with geofence radius, shift start, late threshold, optional IP/network support
+- Employee dashboard, attendance history, and calendar view
+- Admin dashboard, employee management, calendar, reports, and CSV export
+- Optional late check-in email via SMTP
+- Late-arrival email alerts are optional. If SMTP variables are not configured, check-in still succeeds and the backend logs: `Late email skipped because SMTP is not configured.`
 
-## Local setup
+## Ports
 
-1. Install dependencies with `npm install` in `backend` and `frontend`.
-2. Copy `backend/.env.example` to `backend/.env`. Set a random `JWT_SECRET` of at least 32 characters and a local `DATABASE_URL`. Never reuse production secrets locally.
-3. Set local PostgreSQL variables in PowerShell, then start the database:
+- Frontend: http://localhost:5173
+- Backend: http://localhost:5005
+- PostgreSQL: localhost:55432
 
-```powershell
-$env:POSTGRES_USER = 'geo_attendance_local'
-$env:POSTGRES_PASSWORD = 'choose-a-local-only-password'
+## Setup
+
+1. Install dependencies:
+
+```bash
+cd backend
+npm install
+
+cd ../frontend
+npm install
+```
+
+2. Start PostgreSQL:
+
+```bash
 docker compose up -d
 ```
 
-Use the same local database credentials in `backend/.env`'s `DATABASE_URL`.
-4. Run `npm run migrate` in `backend`.
-5. Demo seed data is disabled by default and always skipped in production. To create demo accounts locally, set `ENABLE_DEMO_SEED=true`, `DEMO_ADMIN_PASSWORD`, and `DEMO_EMPLOYEE_PASSWORD` in `backend/.env`; both passwords must be at least 12 characters. The local login demo buttons are hidden in production builds; enable them in development with `VITE_ENABLE_DEMO_ACCESS=true` in `frontend/.env.local`.
-6. Run `npm run dev` in `backend` and `frontend` in separate terminals.
+3. Configure backend environment:
 
-The backend refuses to start unless `JWT_SECRET` is configured with a unique value of at least 32 characters. Production database, JWT and SMTP configuration must be supplied through the deployment environment.
+```bash
+cd backend
+cp .env.example .env
+```
 
-## Vercel deployment
+Update `JWT_SECRET` in `.env` before a real deployment.
 
-Set `VITE_API_BASE_URL` in the Vercel project's Environment Variables to the deployed backend API base URL, including `/api`. No Render service URL is embedded in the Vercel configuration. Keep `VITE_ENABLE_DEMO_ACCESS` unset or false in deployment; demo controls are compiled only into development builds.
+4. Run migration and seed:
+
+```bash
+cd backend
+npm run migrate
+npm run seed
+```
+
+5. Start backend:
+
+```bash
+cd backend
+npm run dev
+```
+
+6. Start frontend:
+
+```bash
+cd frontend
+npm run dev
+```
+
+
 
 ## Notes
 
-Browsers cannot reliably read WiFi SSIDs. GPS geofencing is the primary location check, with optional backend request IP/range checks as a supporting signal. See [API_DOCUMENTATION.md](API_DOCUMENTATION.md) for API request examples.
+Browsers cannot reliably read WiFi SSID. This app uses GPS geofence as the primary validation and optional backend request IP/range checks as a supporting signal.
